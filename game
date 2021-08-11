@@ -290,7 +290,7 @@ addi $s7, $0, 0		# $s7 is index of loop
 addi $t9, $0, 0		# $t9 is address of the location/cooldown time of the current obstacle ($t9 = $s3 + 4 * $s7)
 addi $t7, $0, 0		# $t7 is the location/cooldown time of the current obstacle ($t7 = 0($t9))
 addi $t8, $0, 0		# used as placeholder to perform arithmetic
-LoopUpdateObsLoc: bge $s7, $s4, DrawAssets
+LoopUpdateObsLoc: bge $s7, $s4, CheckCollision
 sll $t9, $s7, 2		# $t9 = 4 * $s7
 add $t9, $t9, $s3	# $t9 = $s3 + 4 * $s7
 lw $t7, 0($t9)		# $t7 stores location of current obstacle
@@ -360,6 +360,7 @@ j LoopUpdateObsLoc
 
 # After the location is updated, check collision.
 # Update the location of check points of player.
+CheckCollision:
 la $t9, PlayerLocation
 addi $t1, $s2, 12	# $t1 stores the location of the upper wing of the player
 sw $t1, 0($t9)
@@ -565,14 +566,14 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop1:
-bgt $t6, LENPLAYER, END
+bgt $t6, LENPLAYER, CheckMain2
 bgt $t5, LENOBS, InnerLoopFin1
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
-lw $t7, 0($t3)
-lw $t8, 0($t4)
+lw $t7, 0($t1)
+lw $t8, 0($t2)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
@@ -581,9 +582,6 @@ J OutterLoop1
 InnerLoopFin1:
 addi $t6, $t6, 1
 addi $t5, $0, 0
-addi $t0, $0, LENOBS	
-sll $t0, $t0, 2
-sub $t4, $t4, $t0
 j OutterLoop1
 
 # Check if any number in PlayerLocation is in Obs2Location:
@@ -598,14 +596,14 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop2:
-bgt $t6, LENPLAYER, END
+bgt $t6, LENPLAYER, CheckMain3
 bgt $t5, LENOBS, InnerLoopFin2
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
-lw $t7, 0($t3)
-lw $t8, 0($t4)
+lw $t7, 0($t1)
+lw $t8, 0($t2)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
@@ -614,9 +612,6 @@ J OutterLoop2
 InnerLoopFin2:
 addi $t6, $t6, 1
 addi $t5, $0, 0
-addi $t0, $0, LENOBS	
-sll $t0, $t0, 2
-sub $t4, $t4, $t0
 j OutterLoop2
 
 # Check if any number in PlayerLocation is in Obs3Location:
@@ -631,14 +626,14 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop3:
-bgt $t6, LENPLAYER, END
+bgt $t6, LENPLAYER, CheckMain4
 bgt $t5, LENOBS, InnerLoopFin3
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
-lw $t7, 0($t3)
-lw $t8, 0($t4)
+lw $t7, 0($t1)
+lw $t8, 0($t2)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
@@ -647,9 +642,6 @@ J OutterLoop3
 InnerLoopFin3:
 addi $t6, $t6, 1
 addi $t5, $0, 0
-addi $t0, $0, LENOBS	
-sll $t0, $t0, 2
-sub $t4, $t4, $t0
 j OutterLoop3
 
 # Check if any number in PlayerLocation is in Obs4Location:
@@ -662,14 +654,14 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop4:
-bgt $t6, LENPLAYER, END
+bgt $t6, LENPLAYER, CheckMain5
 bgt $t5, LENOBS, InnerLoopFin4
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
-lw $t7, 0($t3)
-lw $t8, 0($t4)
+lw $t7, 0($t1)
+lw $t8, 0($t2)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
@@ -678,9 +670,6 @@ J OutterLoop4
 InnerLoopFin4:
 addi $t6, $t6, 1
 addi $t5, $0, 0
-addi $t0, $0, LENOBS	
-sll $t0, $t0, 2
-sub $t4, $t4, $t0
 j OutterLoop4
 
 # Check if any number in PlayerLocation is in Obs5Location:
@@ -695,14 +684,14 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop5:
-bgt $t6, LENPLAYER, END
+bgt $t6, LENPLAYER, DrawAssets
 bgt $t5, LENOBS, InnerLoopFin5
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
-lw $t7, 0($t3)
-lw $t8, 0($t4)
+lw $t7, 0($t1)
+lw $t8, 0($t2)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
@@ -711,9 +700,6 @@ J OutterLoop5
 InnerLoopFin5:
 addi $t6, $t6, 1
 addi $t5, $0, 0
-addi $t0, $0, LENOBS	
-sll $t0, $t0, 2
-sub $t4, $t4, $t0
 j OutterLoop5
 
 CollisionDetected:
