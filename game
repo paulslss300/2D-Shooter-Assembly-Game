@@ -558,6 +558,8 @@ Obs5End:
 CheckMain1:
 la $t3, PlayerLocation
 la $t4, Obs1Location
+addi $t1, $0, 0
+addi $t2, $0, 0
 addi $t6, $0, 0		# index for outer loop
 addi $t5, $0, 0 	# index for inner loop
 
@@ -566,17 +568,9 @@ OutterLoop1:
 bgt $t6, LENPLAYER, END
 bgt $t5, LENOBS, InnerLoopFin1
 sll $t1, $t6, 2		# $t6 * 4
-add $t3, $t1, $t3	# $t3 + $t6 * 4
-sll $t2, $t5, 2		# $t6 * 4
-add $t4, $t2, $t4	# $t4 + $t5 * 4
-
-add $t8, $0, $t6
-sll $t8, $t8, 2
-add $t3, $t3, $t8	# $t3 += 4 * $t6
-add $t9, $0, $t5
-sll $t8, $t8, 2
-add $t4, $t4, $t9	# $t4 += 4 * $t5
-
+add $t1, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t5 * 4
+add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t3)
 lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
@@ -597,6 +591,8 @@ j OutterLoop1
 CheckMain2:
 la $t3, PlayerLocation
 la $t4, Obs2Location
+addi $t1, $0, 0
+addi $t2, $0, 0
 addi $t6, $0, 0		# index for outer loop
 addi $t5, $0, 0 	# index for inner loop
 
@@ -605,17 +601,9 @@ OutterLoop2:
 bgt $t6, LENPLAYER, END
 bgt $t5, LENOBS, InnerLoopFin2
 sll $t1, $t6, 2		# $t6 * 4
-add $t3, $t1, $t3	# $t3 + $t6 * 4
-sll $t2, $t5, 2		# $t6 * 4
-add $t4, $t2, $t4	# $t4 + $t5 * 4
-
-add $t8, $0, $t6
-sll $t8, $t8, 2
-add $t3, $t3, $t8	# $t3 += 4 * $t6
-add $t9, $0, $t5
-sll $t8, $t8, 2
-add $t4, $t4, $t9	# $t4 += 4 * $t5
-
+add $t1, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t5 * 4
+add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t3)
 lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
@@ -636,6 +624,8 @@ j OutterLoop2
 CheckMain3:
 la $t3, PlayerLocation
 la $t4, Obs3Location
+addi $t1, $0, 0
+addi $t2, $0, 0
 addi $t6, $0, 0		# index for outer loop
 addi $t5, $0, 0 	# index for inner loop
 
@@ -644,17 +634,9 @@ OutterLoop3:
 bgt $t6, LENPLAYER, END
 bgt $t5, LENOBS, InnerLoopFin3
 sll $t1, $t6, 2		# $t6 * 4
-add $t3, $t1, $t3	# $t3 + $t6 * 4
-sll $t2, $t5, 2		# $t6 * 4
-add $t4, $t2, $t4	# $t4 + $t5 * 4
-
-add $t8, $0, $t6
-sll $t8, $t8, 2
-add $t3, $t3, $t8	# $t3 += 4 * $t6
-add $t9, $0, $t5
-sll $t8, $t8, 2
-add $t4, $t4, $t9	# $t4 += 4 * $t5
-
+add $t1, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t5 * 4
+add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t3)
 lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
@@ -683,17 +665,9 @@ OutterLoop4:
 bgt $t6, LENPLAYER, END
 bgt $t5, LENOBS, InnerLoopFin4
 sll $t1, $t6, 2		# $t6 * 4
-add $t3, $t1, $t3	# $t3 + $t6 * 4
-sll $t2, $t5, 2		# $t6 * 4
-add $t4, $t2, $t4	# $t4 + $t5 * 4
-
-add $t8, $0, $t6
-sll $t8, $t8, 2
-add $t3, $t3, $t8	# $t3 += 4 * $t6
-add $t9, $0, $t5
-sll $t8, $t8, 2
-add $t4, $t4, $t9	# $t4 += 4 * $t5
-
+add $t1, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t5 * 4
+add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t3)
 lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
@@ -714,6 +688,8 @@ j OutterLoop4
 CheckMain5:
 la $t3, PlayerLocation
 la $t4, Obs5Location
+addi $t1, $0, 0
+addi $t2, $0, 0
 addi $t6, $0, 0		# index for outer loop
 addi $t5, $0, 0 	# index for inner loop
 
@@ -722,17 +698,9 @@ OutterLoop5:
 bgt $t6, LENPLAYER, END
 bgt $t5, LENOBS, InnerLoopFin5
 sll $t1, $t6, 2		# $t6 * 4
-add $t3, $t1, $t3	# $t3 + $t6 * 4
-sll $t2, $t5, 2		# $t6 * 4
-add $t4, $t2, $t4	# $t4 + $t5 * 4
-
-add $t8, $0, $t6
-sll $t8, $t8, 2
-add $t3, $t3, $t8	# $t3 += 4 * $t6
-add $t9, $0, $t5
-sll $t8, $t8, 2
-add $t4, $t4, $t9	# $t4 += 4 * $t5
-
+add $t1, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t5 * 4
+add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t3)
 lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
@@ -751,7 +719,6 @@ j OutterLoop5
 CollisionDetected:
 subi $s6, $s6, 2		# Cur health - 2
 ble $s6, ZERO, END		# End game when cur health is 0
-j CheckMain1
 
 #################
 # Draw assets.
