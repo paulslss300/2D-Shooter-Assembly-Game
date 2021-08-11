@@ -126,12 +126,13 @@ Start_Game:
 #################
 li $s0, BASE_ADDRESS 			# $s0 stores the base address for framebuffer display
 la $s1, Enemy				# $s1 stores the memory address of the enemy location on framebuffer
-addi $s2, $s0, 0			# $s2 stores the location of player on framebuffer/ test for endgame condition
+addi $s2, $s0, 0			# $s2 stores the location of player on framebuffer
 la $s3, Obstacles			# $s3 stores the memory address of array containing the obstacle locations on framebuffer
 addi $s4, $0, STARTING_DIFFICULTY	# $s4 stores the current difficulty of game
 addi $s5, $0, 0				# $s5 counts the number of game cycles since the latest game difficulty change
 addi $s6, $0, MAX_HEALTH		# $s6 stores player's current health
 # $s7 is an index for loops; don't use $s7 to store constants!
+addi $t0, $0, 0		# WARNING: NECESSARY FOR ENDGAME CONDITION
 
 
 #################
@@ -229,6 +230,7 @@ j LoopEraseObstacles
 #################
 # Fetch and respond to keyboard input:
 #################
+addi $t0, $0, 1		# endgame flag WARNING: DON'T USE $t0 in the KeyboardEvents chunk
 # Detect keyboard event. CAUTION: this implementation only works for screen size 128 * 64.
 KeyboardEvents:
 li $t9, KEYBOARD_ADDRESS
@@ -297,7 +299,7 @@ j Start_Game
 # Note: UpdateObsLocations is a big chunk of code, edit with caution.
 UpdateObsLocations:
 # check endgame condition
-beq $s2, -1, END
+beq $t0, -1, END
 
 addi $s7, $0, 0		# $s7 is index of loop
 addi $t9, $0, 0		# $t9 is address of the location/cooldown time of the current obstacle ($t9 = $s3 + 4 * $s7)
@@ -689,7 +691,7 @@ j OutterLoop5
 
 CollisionDetectedObs1:
 # grazing? - check $t6 to find out. If $t6 > 8, not grazing!
-bgt $t6, 8, FullCollisionObs1
+bgt $t6, 7, FullCollisionObs1
 # grazing collision:
 subi $s6, $s6, 1		# Cur health - 1
 j CollisionDetectedObs1Cont
@@ -714,7 +716,7 @@ j DrawAssets
 
 CollisionDetectedObs2:
 # grazing? - check $t6 to find out. If $t6 > 8, not grazing!
-bgt $t6, 8, FullCollisionObs2
+bgt $t6, 7, FullCollisionObs2
 # grazing collision:
 subi $s6, $s6, 1		# Cur health - 1
 j CollisionDetectedObs2Cont
@@ -739,7 +741,7 @@ j DrawAssets
 
 CollisionDetectedObs3:
 # grazing? - check $t6 to find out. If $t6 > 8, not grazing!
-bgt $t6, 8, FullCollisionObs3
+bgt $t6, 7, FullCollisionObs3
 # grazing collision:
 subi $s6, $s6, 1		# Cur health - 1
 j CollisionDetectedObs3Cont
@@ -764,7 +766,7 @@ j DrawAssets
 
 CollisionDetectedObs4:
 # grazing? - check $t6 to find out. If $t6 > 8, not grazing!
-bgt $t6, 8, FullCollisionObs4
+bgt $t6, 7, FullCollisionObs4
 # grazing collision:
 subi $s6, $s6, 1		# Cur health - 1
 j CollisionDetectedObs4Cont
@@ -789,7 +791,7 @@ j DrawAssets
 
 CollisionDetectedObs5:
 # grazing? - check $t6 to find out. If $t6 > 8, not grazing!
-bgt $t6, 8, FullCollisionObs5
+bgt $t6, 7, FullCollisionObs5
 # grazing collision:
 subi $s6, $s6, 1		# Cur health - 1
 j CollisionDetectedObs5Cont
@@ -950,7 +952,7 @@ sw $a0, 12($sp)
 jal Draw
 
 # endgame condition flag:
-addi $s2, $0, -1
+addi $t0, $0, -1
 
 # Pause
 li $v0, 32
