@@ -125,8 +125,8 @@ Start_Game:
 # Loading reserved registers.
 #################
 li $s0, BASE_ADDRESS 			# $s0 stores the base address for framebuffer display
-la $s1, Enemy				# $s2 stores the memory address of the enemy location on framebuffer
-addi $s2, $s0, 0			# $s2 stores the location of player on framebuffer
+la $s1, Enemy				# $s1 stores the memory address of the enemy location on framebuffer
+addi $s2, $s0, 0			# $s2 stores the location of player on framebuffer/ test for endgame condition
 la $s3, Obstacles			# $s3 stores the memory address of array containing the obstacle locations on framebuffer
 addi $s4, $0, STARTING_DIFFICULTY	# $s4 stores the current difficulty of game
 addi $s5, $0, 0				# $s5 counts the number of game cycles since the latest game difficulty change
@@ -192,6 +192,15 @@ sw $a0, 0($sp)
 addi $a0, $0, PLAYER_LENGTH
 sw $a0, 4($sp)
 sw $s2, 8($sp)		# start drawing at $s2
+jal Erase
+
+# Erase enemy.
+addi $sp, $sp, -12
+addi $a0, $0, ENEMY_WIDTH
+sw $a0, 0($sp)
+addi $a0, $0, ENEMY_LENGTH
+sw $a0, 4($sp)
+sw $s1, 8($sp)		# start drawing at $s1
 jal Erase
 
 # Erase obstacles by loop
@@ -280,12 +289,16 @@ j UpdateObsLocations
 # When pressing p, restart the game
 Respond_to_p:
 j Start_Game
+
 	
 #################
 # Update obstacle locations.
 #################
 # Note: UpdateObsLocations is a big chunk of code, edit with caution.
 UpdateObsLocations:
+# check endgame condition
+beq $s2, -1, END
+
 addi $s7, $0, 0		# $s7 is index of loop
 addi $t9, $0, 0		# $t9 is address of the location/cooldown time of the current obstacle ($t9 = $s3 + 4 * $s7)
 addi $t7, $0, 0		# $t7 is the location/cooldown time of the current obstacle ($t7 = 0($t9))
@@ -720,7 +733,7 @@ li $a0, 0
 add $a1, $0, $t8
 syscall			
 addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
-sw $a0, 0($s3)			# store cooldown time to obstacle location
+sw $a0, 4($s3)			# store cooldown time to obstacle location
 
 j DrawAssets
 
@@ -817,6 +830,17 @@ sw $a0, 8($sp)
 sw $s2, 12($sp)		# start drawing at $s2
 jal Draw
 
+# Draw enemy.
+addi $sp, $sp, -16
+addi $a0, $0, ENEMY_WIDTH
+sw $a0, 0($sp)
+addi $a0, $0, ENEMY_LENGTH
+sw $a0, 4($sp)
+la $a0, ENEMY		# object to draw is ENEMY
+sw $a0, 8($sp)
+sw $s1, 12($sp)		# start drawing at $s1
+jal Draw
+
 # Draw obstacles
 addi $s7, $0, 0		# $s7 is index of loop
 addi $t9, $0, 0		# $t9 is the location of the current obstacle to be drawn ($t9 = 0($s3 + 4 * $s7))
@@ -910,10 +934,33 @@ addi $a0, $s0, 0	# start drawing at $s0
 sw $a0, 12($sp)
 jal Draw
 
+j HoldDifficulty
+
+
+END:	
+addi $sp, $sp, -16
+addi $a0, $0, HEIGHT	# object height = 64
+sw $a0, 0($sp)
+addi $a0, $0, LENGTH	# object length = 128
+sw $a0, 4($sp)
+la $a0, GAMEOVER	# object to draw is GAMEOVER
+sw $a0, 8($sp)
+addi $a0, $s0, 0	# start drawing at $s0
+sw $a0, 12($sp)
+jal Draw
+
+# endgame condition flag:
+addi $s2, $0, -1
+
+# Pause
+li $v0, 32
+li $a0, SLEEP_MS
+syscall
+
+j KeyboardEvents
 
 HoldDifficulty:
 # Don't increase difficulty either because not enough time has passed or the game is already at max difficulty.
-
 
 # Pause
 li $v0, 32
@@ -1038,15 +1085,3 @@ j LoopEraseHeight
 RETURNErase:
 jr $ra
 
-
-END:
-addi $sp, $sp, -16
-addi $a0, $0, HEIGHT	# object height = 64
-sw $a0, 0($sp)
-addi $a0, $0, LENGTH	# object length = 128
-sw $a0, 4($sp)
-la $a0, GAMEOVER	# object to draw is GAMEOVER
-sw $a0, 8($sp)
-addi $a0, $s0, 0	# start drawing at $s0
-sw $a0, 12($sp)
-jal Draw
