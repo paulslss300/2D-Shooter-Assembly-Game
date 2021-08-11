@@ -106,7 +106,7 @@ CLOUD:		.word 0xffffff, 0xffffff, 0x949492, 0xffffff, 0x8b8c88, 0xffffff, 0x9293
 
 # Obstacle/enemy location
 Obstacles:	.word 0:MAX_DIFFICULTY
-Enemies: 	.word 0		# there is always only 1 enemy, enemy's location stored here since there is not enough registers...
+Enemy: 	.word 0		# there is always only 1 enemy, enemy's location stored here since there is not enough registers...
 
 # Collision dectection
 PlayerLocation:	.word 0:5
@@ -125,12 +125,12 @@ Start_Game:
 # Loading reserved registers.
 #################
 li $s0, BASE_ADDRESS 			# $s0 stores the base address for framebuffer display
+la $s1, Enemy				# $s2 stores the memory address of the enemy location on framebuffer
 addi $s2, $s0, 0			# $s2 stores the location of player on framebuffer
 la $s3, Obstacles			# $s3 stores the memory address of array containing the obstacle locations on framebuffer
 addi $s4, $0, STARTING_DIFFICULTY	# $s4 stores the current difficulty of game
 addi $s5, $0, 0				# $s5 counts the number of game cycles since the latest game difficulty change
 addi $s6, $0, MAX_HEALTH		# $s6 stores player's current health
-# $s1 is free to store other constants; don't use $t registers to store constants!
 # $s7 is an index for loops; don't use $s7 to store constants!
 
 
@@ -358,7 +358,7 @@ UpdateNextObsLocation:
 addi $s7, $s7, 1	# $s7 += 1
 j LoopUpdateObsLoc
 
-# After the location of obstacle is updated, check collision.
+# After the location is updated, check collision.
 # Update the location of check points of player.
 la $t9, PlayerLocation
 addi $t1, $s2, 8	# $t1 stores the location of the upper wing of the player
@@ -374,13 +374,12 @@ sw $t5, 16($t9)
 
 # Update the location of check points of obstacle1.
 # There are 27 = 3 * 9 points to update.
+LoopMain1:
 la $t8, Obs1Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
 addi $t5, $0, 44
-sll $t9, $s7, 2		# $t9 = 4 * $s7
-add $t9, $t9, $s3	# $t9 = $s3 + 4 * $s7
-lw $t7, 0($t9)		# $t7 stores location of current obstacle
+lw $t7, 0($s3)		# $t7 stores location of current obstacle
 Obs1Loop:
 bge $t0, $t1, Obs1End
 sll $t2, $t0, 2		# $t2 is the offset
@@ -392,34 +391,180 @@ mul $t4, $t4, $t5	# 44 * (i - 9)
 addi $t4, $t4, 12	# 12 + 44 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update:
+Update1:
 addi $t0, $t0, 1
 j Obs1Loop
 Obs1Line1:
 mul $t4, $t4, $t5	# i * 44
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update
+j Update1
 Obs1Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
 mul $t4, $t4, $t5	# 44 * (i - 18)
 addi $t4, $t4, 20	# 20 + 44 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update
+j Update1
 Obs1End:
+
+# Update the location of check points of obstacle2.
+# There are 27 = 3 * 9 points to update.
+LoopMain2:
+la $t8, Obs2Location
+addi $t0, $0, 0		# i = 0
+addi $t1, $0, 27	# i < 27
+addi $t5, $0, 44
+lw $t7, 4($s3)		# $t7 stores location of current obstacle
+Obs2Loop:
+bge $t0, $t1, Obs2End
+sll $t2, $t0, 2		# $t2 is the offset
+add $t3, $t8, $t2
+blt $t0, NINE, Obs2Line1
+bge $t0, EIGHTEEN, Obs2Line3
+sub $t4, $t0, NINE	# i - 9
+mul $t4, $t4, $t5	# 44 * (i - 9)
+addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
+Update2:
+addi $t0, $t0, 1
+j Obs2Loop
+Obs2Line1:
+mul $t4, $t4, $t5	# i * 44
+add $t4, $t4, $t7
+sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
+j Update2
+Obs2Line3:
+sub $t4, $t0, EIGHTEEN	# i - 18
+mul $t4, $t4, $t5	# 44 * (i - 18)
+addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
+j Update2
+Obs2End:
+
+# Update the location of check points of obstacle3.
+# There are 27 = 3 * 9 points to update.
+LoopMain3:
+la $t8, Obs3Location
+addi $t0, $0, 0		# i = 0
+addi $t1, $0, 27	# i < 27
+addi $t5, $0, 44
+lw $t7, 8($s3)		# $t7 stores location of current obstacle
+Obs3Loop:
+bge $t0, $t1, Obs3End
+sll $t2, $t0, 2		# $t2 is the offset
+add $t3, $t8, $t2
+blt $t0, NINE, Obs3Line1
+bge $t0, EIGHTEEN, Obs3Line3
+sub $t4, $t0, NINE	# i - 9
+mul $t4, $t4, $t5	# 44 * (i - 9)
+addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
+Update3:
+addi $t0, $t0, 1
+j Obs3Loop
+Obs3Line1:
+mul $t4, $t4, $t5	# i * 44
+add $t4, $t4, $t7
+sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
+j Update3
+Obs3Line3:
+sub $t4, $t0, EIGHTEEN	# i - 18
+mul $t4, $t4, $t5	# 44 * (i - 18)
+addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
+j Update3
+Obs3End:
+
+# Update the location of check points of obstacle4.
+# There are 27 = 3 * 9 points to update.
+LoopMain4:
+la $t8, Obs4Location
+addi $t0, $0, 0		# i = 0
+addi $t1, $0, 27	# i < 27
+addi $t5, $0, 44
+lw $t7, 12($s3)		# $t7 stores location of current obstacle
+Obs4Loop:
+bge $t0, $t1, Obs4End
+sll $t2, $t0, 2		# $t2 is the offset
+add $t3, $t8, $t2
+blt $t0, NINE, Obs4Line1
+bge $t0, EIGHTEEN, Obs4Line3
+sub $t4, $t0, NINE	# i - 9
+mul $t4, $t4, $t5	# 44 * (i - 9)
+addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
+Update4:
+addi $t0, $t0, 1
+j Obs4Loop
+Obs4Line1:
+mul $t4, $t4, $t5	# i * 44
+add $t4, $t4, $t7
+sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
+j Update4
+Obs4Line3:
+sub $t4, $t0, EIGHTEEN	# i - 18
+mul $t4, $t4, $t5	# 44 * (i - 18)
+addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
+j Update4
+Obs4End:
+
+# Update the location of check points of obstacle5.
+# There are 27 = 3 * 9 points to update.
+LoopMain5:
+la $t8, Obs5Location
+addi $t0, $0, 0		# i = 0
+addi $t1, $0, 27	# i < 27
+addi $t5, $0, 44
+lw $t7, 16($s3)		# $t7 stores location of current obstacle
+Obs5Loop:
+bge $t0, $t1, Obs5End
+sll $t2, $t0, 2		# $t2 is the offset
+add $t3, $t8, $t2
+blt $t0, NINE, Obs5Line1	# if i < 9
+bge $t0, EIGHTEEN, Obs5Line3	# if i >= 18
+sub $t4, $t0, NINE	# i - 9
+mul $t4, $t4, $t5	# 44 * (i - 9)
+addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
+Update5:
+addi $t0, $t0, 1
+j Obs5Loop
+Obs5Line1:
+mul $t4, $t4, $t5	# i * 44
+add $t4, $t4, $t7
+sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
+j Update5
+Obs5Line3:
+sub $t4, $t0, EIGHTEEN	# i - 18
+mul $t4, $t4, $t5	# 44 * (i - 18)
+addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+add $t4, $t4, $t7	
+sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
+j Update5
+Obs5End:
+
 
 # Check if any number in PlayerLocation is in Obs1Location:
 # init values
+CheckMain1:
 la $t3, PlayerLocation
 la $t4, Obs1Location
 addi $t6, $0, 0		# index for outer loop
 addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
-OutterLoop:
+OutterLoop1:
 bgt $t6, LENPLAYER, END
-bgt $t5, LENOBS, InnerLoopFin
+bgt $t5, LENOBS, InnerLoopFin1
 sll $t1, $t6, 2		# $t6 * 4
 add $t3, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t6 * 4
@@ -437,21 +582,176 @@ lw $t8, 0($t4)
 beq $t7, $t8, CollisionDetected
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
-J OutterLoop
+J OutterLoop1
 
-InnerLoopFin:
+InnerLoopFin1:
 addi $t6, $t6, 1
-addi $t5, $0, 0	
-# TODO: reset $t4 to address(Obs1Location)by subtracting some values based on len(Obs1Location)
-J OutterLoop
+addi $t5, $0, 0
+addi $t0, $0, LENOBS	
+sll $t0, $t0, 2
+sub $t4, $t4, $t0
+j OutterLoop1
 
+# Check if any number in PlayerLocation is in Obs2Location:
+# init values
+CheckMain2:
+la $t3, PlayerLocation
+la $t4, Obs2Location
+addi $t6, $0, 0		# index for outer loop
+addi $t5, $0, 0 	# index for inner loop
 
+# loop begins:
+OutterLoop2:
+bgt $t6, LENPLAYER, END
+bgt $t5, LENOBS, InnerLoopFin2
+sll $t1, $t6, 2		# $t6 * 4
+add $t3, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t6 * 4
+add $t4, $t2, $t4	# $t4 + $t5 * 4
+
+add $t8, $0, $t6
+sll $t8, $t8, 2
+add $t3, $t3, $t8	# $t3 += 4 * $t6
+add $t9, $0, $t5
+sll $t8, $t8, 2
+add $t4, $t4, $t9	# $t4 += 4 * $t5
+
+lw $t7, 0($t3)
+lw $t8, 0($t4)
+beq $t7, $t8, CollisionDetected
+# collision is not detected, continue the loop
+addi $t5, $t5, 1		# $t5 += 1
+J OutterLoop2
+
+InnerLoopFin2:
+addi $t6, $t6, 1
+addi $t5, $0, 0
+addi $t0, $0, LENOBS	
+sll $t0, $t0, 2
+sub $t4, $t4, $t0
+j OutterLoop2
+
+# Check if any number in PlayerLocation is in Obs3Location:
+# init values
+CheckMain3:
+la $t3, PlayerLocation
+la $t4, Obs3Location
+addi $t6, $0, 0		# index for outer loop
+addi $t5, $0, 0 	# index for inner loop
+
+# loop begins:
+OutterLoop3:
+bgt $t6, LENPLAYER, END
+bgt $t5, LENOBS, InnerLoopFin3
+sll $t1, $t6, 2		# $t6 * 4
+add $t3, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t6 * 4
+add $t4, $t2, $t4	# $t4 + $t5 * 4
+
+add $t8, $0, $t6
+sll $t8, $t8, 2
+add $t3, $t3, $t8	# $t3 += 4 * $t6
+add $t9, $0, $t5
+sll $t8, $t8, 2
+add $t4, $t4, $t9	# $t4 += 4 * $t5
+
+lw $t7, 0($t3)
+lw $t8, 0($t4)
+beq $t7, $t8, CollisionDetected
+# collision is not detected, continue the loop
+addi $t5, $t5, 1		# $t5 += 1
+J OutterLoop3
+
+InnerLoopFin3:
+addi $t6, $t6, 1
+addi $t5, $0, 0
+addi $t0, $0, LENOBS	
+sll $t0, $t0, 2
+sub $t4, $t4, $t0
+j OutterLoop3
+
+# Check if any number in PlayerLocation is in Obs4Location:
+# init values
+CheckMain4:
+la $t3, PlayerLocation
+la $t4, Obs4Location
+addi $t6, $0, 0		# index for outer loop
+addi $t5, $0, 0 	# index for inner loop
+
+# loop begins:
+OutterLoop4:
+bgt $t6, LENPLAYER, END
+bgt $t5, LENOBS, InnerLoopFin4
+sll $t1, $t6, 2		# $t6 * 4
+add $t3, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t6 * 4
+add $t4, $t2, $t4	# $t4 + $t5 * 4
+
+add $t8, $0, $t6
+sll $t8, $t8, 2
+add $t3, $t3, $t8	# $t3 += 4 * $t6
+add $t9, $0, $t5
+sll $t8, $t8, 2
+add $t4, $t4, $t9	# $t4 += 4 * $t5
+
+lw $t7, 0($t3)
+lw $t8, 0($t4)
+beq $t7, $t8, CollisionDetected
+# collision is not detected, continue the loop
+addi $t5, $t5, 1		# $t5 += 1
+J OutterLoop4
+
+InnerLoopFin4:
+addi $t6, $t6, 1
+addi $t5, $0, 0
+addi $t0, $0, LENOBS	
+sll $t0, $t0, 2
+sub $t4, $t4, $t0
+j OutterLoop4
+
+# Check if any number in PlayerLocation is in Obs5Location:
+# init values
+CheckMain5:
+la $t3, PlayerLocation
+la $t4, Obs5Location
+addi $t6, $0, 0		# index for outer loop
+addi $t5, $0, 0 	# index for inner loop
+
+# loop begins:
+OutterLoop5:
+bgt $t6, LENPLAYER, END
+bgt $t5, LENOBS, InnerLoopFin5
+sll $t1, $t6, 2		# $t6 * 4
+add $t3, $t1, $t3	# $t3 + $t6 * 4
+sll $t2, $t5, 2		# $t6 * 4
+add $t4, $t2, $t4	# $t4 + $t5 * 4
+
+add $t8, $0, $t6
+sll $t8, $t8, 2
+add $t3, $t3, $t8	# $t3 += 4 * $t6
+add $t9, $0, $t5
+sll $t8, $t8, 2
+add $t4, $t4, $t9	# $t4 += 4 * $t5
+
+lw $t7, 0($t3)
+lw $t8, 0($t4)
+beq $t7, $t8, CollisionDetected
+# collision is not detected, continue the loop
+addi $t5, $t5, 1		# $t5 += 1
+J OutterLoop5
+
+InnerLoopFin5:
+addi $t6, $t6, 1
+addi $t5, $0, 0
+addi $t0, $0, LENOBS	
+sll $t0, $t0, 2
+sub $t4, $t4, $t0
+j OutterLoop5
 
 CollisionDetected:
-# TODO: do the tasks when collision is detected, i.e. minus health, check end game condition, etc.
-subi $s6, $s6, 1
-beq $s6, ZERO, END
-
+subi $s6, $s6, 2		# Cur health - 2
+ble $s6, ZERO, END		# End game when cur health is 0
+j CheckMain1
 
 #################
 # Draw assets.
@@ -693,6 +993,13 @@ jr $ra
 
 
 END:
-# TODO:
-# ...
-
+addi $sp, $sp, -16
+addi $a0, $0, HEIGHT	# object height = 64
+sw $a0, 0($sp)
+addi $a0, $0, LENGTH	# object length = 128
+sw $a0, 4($sp)
+la $a0, GAMEOVER	# object to draw is GAMEOVER
+sw $a0, 8($sp)
+addi $a0, $s0, 0	# start drawing at $s0
+sw $a0, 12($sp)
+jal Draw
