@@ -361,15 +361,15 @@ j LoopUpdateObsLoc
 # After the location is updated, check collision.
 # Update the location of check points of player.
 la $t9, PlayerLocation
-addi $t1, $s2, 8	# $t1 stores the location of the upper wing of the player
+addi $t1, $s2, 12	# $t1 stores the location of the upper wing of the player
 sw $t1, 0($t9)
-addi $t2, $s2, 112	# $t2 stores the location of the upper-half body of the player
+addi $t2, $s2, 544	# $t2 stores the location of the upper-half body of the player
 sw $t2, 4($t9)
-addi $t3, $s2, 216	# $t3 stores the location of the head of the player
+addi $t3, $s2, 1578	# $t3 stores the location of the head of the player
 sw $t3, 8($t9)
-addi $t4, $s2, 288	# $t4 stores the location of the lower-half body of the player 
+addi $t4, $s2, 3104 	# $t4 stores the location of the lower-half body of the player 
 sw $t4, 12($t9)
-addi $t5, $s2, 360	# $t5 stores the location of the lower wing of the player
+addi $t5, $s2, 4104	# $t5 stores the location of the lower wing of the player
 sw $t5, 16($t9)
 
 # Update the location of check points of obstacle1.
@@ -378,7 +378,7 @@ LoopMain1:
 la $t8, Obs1Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
-addi $t5, $0, 44
+addi $t5, $0, 512
 lw $t7, 0($s3)		# $t7 stores location of current obstacle
 Obs1Loop:
 bge $t0, $t1, Obs1End
@@ -387,22 +387,22 @@ add $t3, $t8, $t2
 blt $t0, NINE, Obs1Line1
 bge $t0, EIGHTEEN, Obs1Line3
 sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 44 * (i - 9)
-addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+mul $t4, $t4, $t5	# 512 * (i - 9)
+addi $t4, $t4, 12	# 12 + 512 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
 Update1:
 addi $t0, $t0, 1
 j Obs1Loop
 Obs1Line1:
-mul $t4, $t4, $t5	# i * 44
+mul $t4, $t4, $t5	# i * 512
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
 j Update1
 Obs1Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 44 * (i - 18)
-addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+mul $t4, $t4, $t5	# 512 * (i - 18)
+addi $t4, $t4, 20	# 20 + 512 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update1
@@ -414,7 +414,7 @@ LoopMain2:
 la $t8, Obs2Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
-addi $t5, $0, 44
+addi $t5, $0, 512
 lw $t7, 4($s3)		# $t7 stores location of current obstacle
 Obs2Loop:
 bge $t0, $t1, Obs2End
@@ -423,22 +423,22 @@ add $t3, $t8, $t2
 blt $t0, NINE, Obs2Line1
 bge $t0, EIGHTEEN, Obs2Line3
 sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 44 * (i - 9)
-addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+mul $t4, $t4, $t5	# 512 * (i - 9)
+addi $t4, $t4, 12	# 12 + 512 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
 Update2:
 addi $t0, $t0, 1
 j Obs2Loop
 Obs2Line1:
-mul $t4, $t4, $t5	# i * 44
+mul $t4, $t4, $t5	# i * 512
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
 j Update2
 Obs2Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 44 * (i - 18)
-addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+mul $t4, $t4, $t5	# 512 * (i - 18)
+addi $t4, $t4, 20	# 20 + 512 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update2
@@ -450,7 +450,7 @@ LoopMain3:
 la $t8, Obs3Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
-addi $t5, $0, 44
+addi $t5, $0, 512
 lw $t7, 8($s3)		# $t7 stores location of current obstacle
 Obs3Loop:
 bge $t0, $t1, Obs3End
@@ -459,22 +459,22 @@ add $t3, $t8, $t2
 blt $t0, NINE, Obs3Line1
 bge $t0, EIGHTEEN, Obs3Line3
 sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 44 * (i - 9)
-addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+mul $t4, $t4, $t5	# 512 * (i - 9)
+addi $t4, $t4, 12	# 12 + 512 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
 Update3:
 addi $t0, $t0, 1
 j Obs3Loop
 Obs3Line1:
-mul $t4, $t4, $t5	# i * 44
+mul $t4, $t4, $t5	# i * 512
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
 j Update3
 Obs3Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 44 * (i - 18)
-addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+mul $t4, $t4, $t5	# 512 * (i - 18)
+addi $t4, $t4, 20	# 20 + 512 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update3
@@ -486,7 +486,7 @@ LoopMain4:
 la $t8, Obs4Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
-addi $t5, $0, 44
+addi $t5, $0, 512
 lw $t7, 12($s3)		# $t7 stores location of current obstacle
 Obs4Loop:
 bge $t0, $t1, Obs4End
@@ -495,22 +495,22 @@ add $t3, $t8, $t2
 blt $t0, NINE, Obs4Line1
 bge $t0, EIGHTEEN, Obs4Line3
 sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 44 * (i - 9)
-addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+mul $t4, $t4, $t5	# 512 * (i - 9)
+addi $t4, $t4, 12	# 12 + 512 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
 Update4:
 addi $t0, $t0, 1
 j Obs4Loop
 Obs4Line1:
-mul $t4, $t4, $t5	# i * 44
+mul $t4, $t4, $t5	# i * 512
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
 j Update4
 Obs4Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 44 * (i - 18)
-addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+mul $t4, $t4, $t5	# 512 * (i - 18)
+addi $t4, $t4, 20	# 20 + 512 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update4
@@ -522,31 +522,31 @@ LoopMain5:
 la $t8, Obs5Location
 addi $t0, $0, 0		# i = 0
 addi $t1, $0, 27	# i < 27
-addi $t5, $0, 44
+addi $t5, $0, 512
 lw $t7, 16($s3)		# $t7 stores location of current obstacle
 Obs5Loop:
 bge $t0, $t1, Obs5End
 sll $t2, $t0, 2		# $t2 is the offset
 add $t3, $t8, $t2
-blt $t0, NINE, Obs5Line1	# if i < 9
-bge $t0, EIGHTEEN, Obs5Line3	# if i >= 18
+blt $t0, NINE, Obs5Line1	
+bge $t0, EIGHTEEN, Obs5Line3	
 sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 44 * (i - 9)
-addi $t4, $t4, 12	# 12 + 44 * (i - 9)
+mul $t4, $t4, $t5	# 512 * (i - 9)
+addi $t4, $t4, 12	# 12 + 512 * (i - 9)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
 Update5:
 addi $t0, $t0, 1
 j Obs5Loop
 Obs5Line1:
-mul $t4, $t4, $t5	# i * 44
+mul $t4, $t4, $t5	# i * 512
 add $t4, $t4, $t7
 sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
 j Update5
 Obs5Line3:
 sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 44 * (i - 18)
-addi $t4, $t4, 20	# 20 + 44 * (i - 18)
+mul $t4, $t4, $t5	# 512 * (i - 18)
+addi $t4, $t4, 20	# 20 + 512 * (i - 18)
 add $t4, $t4, $t7	
 sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update5
