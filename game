@@ -409,6 +409,7 @@ sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
 j Update1
 Obs1End:
 
+
 # Update the location of check points of obstacle2.
 # There are 27 = 3 * 9 points to update.
 LoopMain2:
@@ -566,8 +567,8 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop1:
-bgt $t6, LENPLAYER, CheckMain2
-bgt $t5, LENOBS, InnerLoopFin1
+bge $t6, LENPLAYER, CheckMain2
+bge $t5, LENOBS, InnerLoopFin1
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
@@ -596,8 +597,8 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop2:
-bgt $t6, LENPLAYER, CheckMain3
-bgt $t5, LENOBS, InnerLoopFin2
+bge $t6, LENPLAYER, CheckMain3
+bge $t5, LENOBS, InnerLoopFin2
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
@@ -626,8 +627,8 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop3:
-bgt $t6, LENPLAYER, CheckMain4
-bgt $t5, LENOBS, InnerLoopFin3
+bge $t6, LENPLAYER, CheckMain4
+bge $t5, LENOBS, InnerLoopFin3
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
@@ -654,8 +655,8 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop4:
-bgt $t6, LENPLAYER, CheckMain5
-bgt $t5, LENOBS, InnerLoopFin4
+bge $t6, LENPLAYER, CheckMain5
+bge $t5, LENOBS, InnerLoopFin4
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
@@ -684,8 +685,8 @@ addi $t5, $0, 0 	# index for inner loop
 
 # loop begins:
 OutterLoop5:
-bgt $t6, LENPLAYER, DrawAssets
-bgt $t5, LENOBS, InnerLoopFin5
+bge $t6, LENPLAYER, DrawAssets
+bge $t5, LENOBS, InnerLoopFin5
 sll $t1, $t6, 2		# $t6 * 4
 add $t1, $t1, $t3	# $t3 + $t6 * 4
 sll $t2, $t5, 2		# $t5 * 4
