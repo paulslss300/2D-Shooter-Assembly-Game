@@ -82,9 +82,9 @@
 # Constants that can'e be stored in registers
 .eqv NINE 9
 .eqv EIGHTEEN 18
-.eqv LENPLAYER 5
-.eqv LENOBS 27
-.eqv LENENE 27
+.eqv LENPLAYER 16
+.eqv LENOBS 9
+.eqv LENENE 9
 .eqv ZERO 0
 
 ###################################
@@ -109,13 +109,13 @@ Obstacles:	.word 0:MAX_DIFFICULTY
 Enemy: 	.word 0		# there is always only 1 enemy, enemy's location stored here since there is not enough registers...
 
 # Collision dectection
-PlayerLocation:	.word 0:5
-Obs1Location:	.word 0:27
-Obs2Location:	.word 0:27
-Obs3Location:	.word 0:27
-Obs4Location:	.word 0:27
-Obs5Location:	.word 0:27
-EnemyLocation:	.word 0:27
+PlayerLocation:	.word 0:16
+Obs1Location:	.word 0:9
+Obs2Location:	.word 0:9
+Obs3Location:	.word 0:9
+Obs4Location:	.word 0:9
+Obs5Location:	.word 0:9
+EnemyLocation:	.word 0:9
 
 str: 	.asciiz "Difficulty += 1 \n"
 
@@ -361,198 +361,169 @@ j LoopUpdateObsLoc
 # After the location is updated, check collision.
 # Update the location of check points of player.
 CheckCollision:
-la $t9, PlayerLocation
-addi $t1, $s2, 12	# $t1 stores the location of the upper wing of the player
-sw $t1, 0($t9)
-addi $t2, $s2, 544	# $t2 stores the location of the upper-half body of the player
-sw $t2, 4($t9)
-addi $t3, $s2, 1578	# $t3 stores the location of the head of the player
-sw $t3, 8($t9)
-addi $t4, $s2, 3104 	# $t4 stores the location of the lower-half body of the player 
-sw $t4, 12($t9)
-addi $t5, $s2, 4104	# $t5 stores the location of the lower wing of the player
-sw $t5, 16($t9)
+la $t8, PlayerLocation	# $t8 points to obstacle location array
+addi $t1, $s2, 0	# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+# grazing collision (first 8 elements)
+addi $t7, $t1, 4
+sw $t7, 0($t8)
+addi $t7, $t1, 8
+sw $t7, 4($t8)
+addi $t7, $t1, 16
+sw $t7, 8($t8)
+addi $t7, $t1, 20
+sw $t7, 12($t8)
+addi $t7, $t1, 4612
+sw $t7, 16($t8)
+addi $t7, $t1, 4616
+sw $t7, 20($t8)
+addi $t7, $t1, 4620
+sw $t7, 24($t8)
+addi $t7, $t1, 4624
+sw $t7, 28($t8)
+# full collision
+addi $t7, $t1, 1576
+sw $t7, 32($t8)
+addi $t7, $t1, 1580
+sw $t7, 36($t8)
+addi $t7, $t1, 1584
+sw $t7, 40($t8)
+addi $t7, $t1, 1588
+sw $t7, 44($t8)
+addi $t7, $t1, 3112
+sw $t7, 48($t8)
+addi $t7, $t1, 3116
+sw $t7, 52($t8)
+addi $t7, $t1, 3120
+sw $t7, 56($t8)
+addi $t7, $t1, 3124
+sw $t7, 60($t8)
 
 # Update the location of check points of obstacle1.
 # There are 27 = 3 * 9 points to update.
 LoopMain1:
-la $t8, Obs1Location
-addi $t0, $0, 0		# i = 0
-addi $t1, $0, 27	# i < 27
-addi $t5, $0, 512
-lw $t7, 0($s3)		# $t7 stores location of current obstacle
-Obs1Loop:
-bge $t0, $t1, Obs1End
-sll $t2, $t0, 2		# $t2 is the offset
-add $t3, $t8, $t2
-blt $t0, NINE, Obs1Line1
-bge $t0, EIGHTEEN, Obs1Line3
-sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 512 * (i - 9)
-addi $t4, $t4, 12	# 12 + 512 * (i - 9)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update1:
-addi $t0, $t0, 1
-j Obs1Loop
-Obs1Line1:
-mul $t4, $t4, $t5	# i * 512
-add $t4, $t4, $t7
-sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update1
-Obs1Line3:
-sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 512 * (i - 18)
-addi $t4, $t4, 20	# 20 + 512 * (i - 18)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update1
-Obs1End:
+la $t8, Obs1Location	# $t8 points to obstacle location array
+lw $t1, 0($s3)		# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+addi $t7, $t1, 0
+sw $t7, 0($t8)
+addi $t7, $t1, 512
+sw $t7, 4($t8)
+addi $t7, $t1, 1024
+sw $t7, 8($t8)
+addi $t7, $t1, 1536
+sw $t7, 12($t8)
+addi $t7, $t1, 2048
+sw $t7, 16($t8)
+addi $t7, $t1, 2560
+sw $t7, 20($t8)
+addi $t7, $t1, 3072
+sw $t7, 24($t8)
+addi $t7, $t1, 3584
+sw $t7, 28($t8)
+addi $t7, $t1, 4096
+sw $t7, 32($t8)
 
 
 # Update the location of check points of obstacle2.
 # There are 27 = 3 * 9 points to update.
 LoopMain2:
-la $t8, Obs2Location
-addi $t0, $0, 0		# i = 0
-addi $t1, $0, 27	# i < 27
-addi $t5, $0, 512
-lw $t7, 4($s3)		# $t7 stores location of current obstacle
-Obs2Loop:
-bge $t0, $t1, Obs2End
-sll $t2, $t0, 2		# $t2 is the offset
-add $t3, $t8, $t2
-blt $t0, NINE, Obs2Line1
-bge $t0, EIGHTEEN, Obs2Line3
-sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 512 * (i - 9)
-addi $t4, $t4, 12	# 12 + 512 * (i - 9)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update2:
-addi $t0, $t0, 1
-j Obs2Loop
-Obs2Line1:
-mul $t4, $t4, $t5	# i * 512
-add $t4, $t4, $t7
-sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update2
-Obs2Line3:
-sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 512 * (i - 18)
-addi $t4, $t4, 20	# 20 + 512 * (i - 18)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update2
-Obs2End:
+la $t8, Obs2Location	# $t8 points to obstacle location array
+lw $t1, 4($s3)		# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+addi $t7, $t1, 0
+sw $t7, 0($t8)
+addi $t7, $t1, 512
+sw $t7, 4($t8)
+addi $t7, $t1, 1024
+sw $t7, 8($t8)
+addi $t7, $t1, 1536
+sw $t7, 12($t8)
+addi $t7, $t1, 2048
+sw $t7, 16($t8)
+addi $t7, $t1, 2560
+sw $t7, 20($t8)
+addi $t7, $t1, 3072
+sw $t7, 24($t8)
+addi $t7, $t1, 3584
+sw $t7, 28($t8)
+addi $t7, $t1, 4096
+sw $t7, 32($t8)
 
 # Update the location of check points of obstacle3.
 # There are 27 = 3 * 9 points to update.
 LoopMain3:
-la $t8, Obs3Location
-addi $t0, $0, 0		# i = 0
-addi $t1, $0, 27	# i < 27
-addi $t5, $0, 512
-lw $t7, 8($s3)		# $t7 stores location of current obstacle
-Obs3Loop:
-bge $t0, $t1, Obs3End
-sll $t2, $t0, 2		# $t2 is the offset
-add $t3, $t8, $t2
-blt $t0, NINE, Obs3Line1
-bge $t0, EIGHTEEN, Obs3Line3
-sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 512 * (i - 9)
-addi $t4, $t4, 12	# 12 + 512 * (i - 9)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update3:
-addi $t0, $t0, 1
-j Obs3Loop
-Obs3Line1:
-mul $t4, $t4, $t5	# i * 512
-add $t4, $t4, $t7
-sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update3
-Obs3Line3:
-sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 512 * (i - 18)
-addi $t4, $t4, 20	# 20 + 512 * (i - 18)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update3
-Obs3End:
+la $t8, Obs3Location	# $t8 points to obstacle location array
+lw $t1, 8($s3)		# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+addi $t7, $t1, 0
+sw $t7, 0($t8)
+addi $t7, $t1, 512
+sw $t7, 4($t8)
+addi $t7, $t1, 1024
+sw $t7, 8($t8)
+addi $t7, $t1, 1536
+sw $t7, 12($t8)
+addi $t7, $t1, 2048
+sw $t7, 16($t8)
+addi $t7, $t1, 2560
+sw $t7, 20($t8)
+addi $t7, $t1, 3072
+sw $t7, 24($t8)
+addi $t7, $t1, 3584
+sw $t7, 28($t8)
+addi $t7, $t1, 4096
+sw $t7, 32($t8)
 
 # Update the location of check points of obstacle4.
 # There are 27 = 3 * 9 points to update.
 LoopMain4:
-la $t8, Obs4Location
-addi $t0, $0, 0		# i = 0
-addi $t1, $0, 27	# i < 27
-addi $t5, $0, 512
-lw $t7, 12($s3)		# $t7 stores location of current obstacle
-Obs4Loop:
-bge $t0, $t1, Obs4End
-sll $t2, $t0, 2		# $t2 is the offset
-add $t3, $t8, $t2
-blt $t0, NINE, Obs4Line1
-bge $t0, EIGHTEEN, Obs4Line3
-sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 512 * (i - 9)
-addi $t4, $t4, 12	# 12 + 512 * (i - 9)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update4:
-addi $t0, $t0, 1
-j Obs4Loop
-Obs4Line1:
-mul $t4, $t4, $t5	# i * 512
-add $t4, $t4, $t7
-sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update4
-Obs4Line3:
-sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 512 * (i - 18)
-addi $t4, $t4, 20	# 20 + 512 * (i - 18)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update4
-Obs4End:
+la $t8, Obs4Location	# $t8 points to obstacle location array
+lw $t1, 12($s3)		# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+addi $t7, $t1, 0
+sw $t7, 0($t8)
+addi $t7, $t1, 512
+sw $t7, 4($t8)
+addi $t7, $t1, 1024
+sw $t7, 8($t8)
+addi $t7, $t1, 1536
+sw $t7, 12($t8)
+addi $t7, $t1, 2048
+sw $t7, 16($t8)
+addi $t7, $t1, 2560
+sw $t7, 20($t8)
+addi $t7, $t1, 3072
+sw $t7, 24($t8)
+addi $t7, $t1, 3584
+sw $t7, 28($t8)
+addi $t7, $t1, 4096
+sw $t7, 32($t8)
 
 # Update the location of check points of obstacle5.
 # There are 27 = 3 * 9 points to update.
 LoopMain5:
-la $t8, Obs5Location
-addi $t0, $0, 0		# i = 0
-addi $t1, $0, 27	# i < 27
-addi $t5, $0, 512
-lw $t7, 16($s3)		# $t7 stores location of current obstacle
-Obs5Loop:
-bge $t0, $t1, Obs5End
-sll $t2, $t0, 2		# $t2 is the offset
-add $t3, $t8, $t2
-blt $t0, NINE, Obs5Line1	
-bge $t0, EIGHTEEN, Obs5Line3	
-sub $t4, $t0, NINE	# i - 9
-mul $t4, $t4, $t5	# 512 * (i - 9)
-addi $t4, $t4, 12	# 12 + 512 * (i - 9)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the second line
-Update5:
-addi $t0, $t0, 1
-j Obs5Loop
-Obs5Line1:
-mul $t4, $t4, $t5	# i * 512
-add $t4, $t4, $t7
-sw $t4, 0($t3)		# $t4 stores the locations of points of the first line
-j Update5
-Obs5Line3:
-sub $t4, $t0, EIGHTEEN	# i - 18
-mul $t4, $t4, $t5	# 512 * (i - 18)
-addi $t4, $t4, 20	# 20 + 512 * (i - 18)
-add $t4, $t4, $t7	
-sw $t4, 0($t3)		# $t4 stores the locations of points on the third line
-j Update5
-Obs5End:
+la $t8, Obs5Location	# $t8 points to obstacle location array
+lw $t1, 16($s3)		# $t1 points to current obstacle location
+addi $t7, $0, 0		# $t7 for arithmetic
+addi $t7, $t1, 0
+sw $t7, 0($t8)
+addi $t7, $t1, 512
+sw $t7, 4($t8)
+addi $t7, $t1, 1024
+sw $t7, 8($t8)
+addi $t7, $t1, 1536
+sw $t7, 12($t8)
+addi $t7, $t1, 2048
+sw $t7, 16($t8)
+addi $t7, $t1, 2560
+sw $t7, 20($t8)
+addi $t7, $t1, 3072
+sw $t7, 24($t8)
+addi $t7, $t1, 3584
+sw $t7, 28($t8)
+addi $t7, $t1, 4096
+sw $t7, 32($t8)
 
 
 # Check if any number in PlayerLocation is in Obs1Location:
@@ -575,7 +546,7 @@ sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t1)
 lw $t8, 0($t2)
-beq $t7, $t8, CollisionDetected
+beq $t7, $t8, CollisionDetectedObs1
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
 J OutterLoop1
@@ -605,7 +576,7 @@ sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t1)
 lw $t8, 0($t2)
-beq $t7, $t8, CollisionDetected
+beq $t7, $t8, CollisionDetectedObs2
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
 J OutterLoop2
@@ -635,7 +606,7 @@ sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t1)
 lw $t8, 0($t2)
-beq $t7, $t8, CollisionDetected
+beq $t7, $t8, CollisionDetectedObs3
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
 J OutterLoop3
@@ -663,7 +634,7 @@ sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t1)
 lw $t8, 0($t2)
-beq $t7, $t8, CollisionDetected
+beq $t7, $t8, CollisionDetectedObs4
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
 J OutterLoop4
@@ -693,7 +664,7 @@ sll $t2, $t5, 2		# $t5 * 4
 add $t2, $t2, $t4	# $t4 + $t5 * 4
 lw $t7, 0($t1)
 lw $t8, 0($t2)
-beq $t7, $t8, CollisionDetected
+beq $t7, $t8, CollisionDetectedObs5
 # collision is not detected, continue the loop
 addi $t5, $t5, 1		# $t5 += 1
 J OutterLoop5
@@ -703,9 +674,131 @@ addi $t6, $t6, 1
 addi $t5, $0, 0
 j OutterLoop5
 
-CollisionDetected:
+CollisionDetectedObs1:
+# grazing? - check $t6 to find out. If $t6 > 8, not grazing!
+bgt $t6, 8, FullCollisionObs1
+# grazing collision:
+subi $s6, $s6, 1		# Cur health - 1
+j CollisionDetectedObs1Cont
+
+FullCollisionObs1:
 subi $s6, $s6, 2		# Cur health - 2
+
+CollisionDetectedObs1Cont:
 ble $s6, ZERO, END		# End game when cur health is 0
+# reset obs:
+# Obstacle is at left boundary, generate random cooldown time t s.t. OBS_COOLDOWN_TIME_MIN <= t <= OBS_COOLDOWN_TIME_MAX
+addi $t8, $0, OBS_COOLDOWN_TIME_MAX
+subi $t8, $t8, OBS_COOLDOWN_TIME_MIN
+li $v0, 42
+li $a0, 0
+add $a1, $0, $t8
+syscall			
+addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
+sw $a0, 0($s3)			# store cooldown time to obstacle location
+
+j DrawAssets
+
+CollisionDetectedObs2:
+# grazing? - check $t6 to find out. If $t6 > 8, not grazing!
+bgt $t6, 8, FullCollisionObs2
+# grazing collision:
+subi $s6, $s6, 1		# Cur health - 1
+j CollisionDetectedObs2Cont
+
+FullCollisionObs2:
+subi $s6, $s6, 2		# Cur health - 2
+
+CollisionDetectedObs2Cont:
+ble $s6, ZERO, END		# End game when cur health is 0
+# reset obs:
+# Obstacle is at left boundary, generate random cooldown time t s.t. OBS_COOLDOWN_TIME_MIN <= t <= OBS_COOLDOWN_TIME_MAX
+addi $t8, $0, OBS_COOLDOWN_TIME_MAX
+subi $t8, $t8, OBS_COOLDOWN_TIME_MIN
+li $v0, 42
+li $a0, 0
+add $a1, $0, $t8
+syscall			
+addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
+sw $a0, 0($s3)			# store cooldown time to obstacle location
+
+j DrawAssets
+
+CollisionDetectedObs3:
+# grazing? - check $t6 to find out. If $t6 > 8, not grazing!
+bgt $t6, 8, FullCollisionObs3
+# grazing collision:
+subi $s6, $s6, 1		# Cur health - 1
+j CollisionDetectedObs3Cont
+
+FullCollisionObs3:
+subi $s6, $s6, 2		# Cur health - 2
+
+CollisionDetectedObs3Cont:
+ble $s6, ZERO, END		# End game when cur health is 0
+# reset obs:
+# Obstacle is at left boundary, generate random cooldown time t s.t. OBS_COOLDOWN_TIME_MIN <= t <= OBS_COOLDOWN_TIME_MAX
+addi $t8, $0, OBS_COOLDOWN_TIME_MAX
+subi $t8, $t8, OBS_COOLDOWN_TIME_MIN
+li $v0, 42
+li $a0, 0
+add $a1, $0, $t8
+syscall			
+addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
+sw $a0, 8($s3)			# store cooldown time to obstacle location
+
+j DrawAssets
+
+CollisionDetectedObs4:
+# grazing? - check $t6 to find out. If $t6 > 8, not grazing!
+bgt $t6, 8, FullCollisionObs4
+# grazing collision:
+subi $s6, $s6, 1		# Cur health - 1
+j CollisionDetectedObs4Cont
+
+FullCollisionObs4:
+subi $s6, $s6, 2		# Cur health - 2
+
+CollisionDetectedObs4Cont:
+ble $s6, ZERO, END		# End game when cur health is 0
+# reset obs:
+# Obstacle is at left boundary, generate random cooldown time t s.t. OBS_COOLDOWN_TIME_MIN <= t <= OBS_COOLDOWN_TIME_MAX
+addi $t8, $0, OBS_COOLDOWN_TIME_MAX
+subi $t8, $t8, OBS_COOLDOWN_TIME_MIN
+li $v0, 42
+li $a0, 0
+add $a1, $0, $t8
+syscall			
+addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
+sw $a0, 12($s3)			# store cooldown time to obstacle location
+
+j DrawAssets
+
+CollisionDetectedObs5:
+# grazing? - check $t6 to find out. If $t6 > 8, not grazing!
+bgt $t6, 8, FullCollisionObs5
+# grazing collision:
+subi $s6, $s6, 1		# Cur health - 1
+j CollisionDetectedObs5Cont
+
+FullCollisionObs5:
+subi $s6, $s6, 2		# Cur health - 2
+
+CollisionDetectedObs5Cont:
+ble $s6, ZERO, END		# End game when cur health is 0
+# reset obs:
+# Obstacle is at left boundary, generate random cooldown time t s.t. OBS_COOLDOWN_TIME_MIN <= t <= OBS_COOLDOWN_TIME_MAX
+addi $t8, $0, OBS_COOLDOWN_TIME_MAX
+subi $t8, $t8, OBS_COOLDOWN_TIME_MIN
+li $v0, 42
+li $a0, 0
+add $a1, $0, $t8
+syscall			
+addi $a0, $a0, OBS_COOLDOWN_TIME_MIN
+sw $a0, 16($s3)			# store cooldown time to obstacle location
+
+j DrawAssets
+
 
 #################
 # Draw assets.
